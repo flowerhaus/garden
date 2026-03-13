@@ -683,11 +683,552 @@ a {
   to { transform: rotate(360deg); }
 }
 
+/* --- Dashboard Grid Layout --- */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 16px;
+  padding-bottom: 100px;
+}
+
+.dashboard-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dashboard-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* --- Calendar --- */
+
+.calendar-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.calendar-title {
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+.calendar-title strong {
+  font-weight: 700;
+  color: var(--text);
+  display: block;
+}
+
+.calendar-count {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--olive);
+  color: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.calendar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.calendar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--cream-dark);
+  transition: background 0.15s ease;
+  cursor: pointer;
+}
+
+.calendar-item:hover {
+  background: var(--border);
+}
+
+.calendar-item-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  background: var(--sage-light);
+}
+
+.calendar-item-icon.deadline {
+  background: var(--coral-light);
+}
+
+.calendar-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.calendar-item-title {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calendar-item-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.calendar-item-arrow {
+  color: var(--text-light);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* --- Project Folders --- */
+
+.folders-section {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+}
+
+.folders-header {
+  margin-bottom: 20px;
+}
+
+.folders-title {
+  font-size: 26px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+.folders-title strong {
+  font-weight: 700;
+  color: var(--text);
+  display: block;
+}
+
+.folders-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.folder-card-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.folder-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--cream-dark);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  text-align: left;
+  width: 100%;
+  transition: background 0.15s ease;
+}
+
+.folder-card:hover {
+  background: var(--border);
+}
+
+.folder-card-open {
+  background: var(--border);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.folder-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--sage-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.folder-card-info {
+  flex: 1;
+}
+
+.folder-card-name {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.folder-card-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.folder-card-chevron {
+  color: var(--text-light);
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.folder-projects {
+  background: var(--cream-dark);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  padding: 4px 16px 12px;
+}
+
+.folder-project-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.folder-project-row:last-child {
+  border-bottom: none;
+}
+
+.folder-project-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.folder-project-title {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.folder-project-date {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* --- File Share --- */
+
+.fileshare-section {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+}
+
+.fileshare-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.fileshare-title {
+  font-size: 26px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+.fileshare-title strong {
+  font-weight: 700;
+  color: var(--text);
+  display: block;
+}
+
+.fileshare-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-top: 8px;
+}
+
+.fileshare-dropzone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+}
+
+.fileshare-dropzone:hover {
+  border-color: var(--olive);
+  background: var(--cream-dark);
+}
+
+.fileshare-dropzone-active {
+  border-color: var(--olive);
+  background: var(--sage-light);
+}
+
+.fileshare-dropzone-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--sage-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--olive);
+}
+
+.fileshare-dropzone-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.fileshare-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fileshare-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-xs);
+  background: var(--cream-dark);
+  transition: background 0.15s ease;
+}
+
+.fileshare-item:hover {
+  background: var(--border);
+}
+
+.fileshare-item-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--sage-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--olive);
+  flex-shrink: 0;
+}
+
+.fileshare-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.fileshare-item-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileshare-item-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* --- Chat Bar --- */
+
+.chat-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+}
+
+.chat-bar-expanded {
+  border-radius: var(--radius) var(--radius) 0 0;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.chat-messages {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 20px 24px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chat-message {
+  display: flex;
+}
+
+.chat-message-client {
+  justify-content: flex-end;
+}
+
+.chat-message-team {
+  justify-content: flex-start;
+}
+
+.chat-bubble {
+  max-width: 70%;
+  padding: 10px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.chat-message-client .chat-bubble {
+  background: var(--olive);
+  color: var(--cream);
+  border-bottom-right-radius: 4px;
+}
+
+.chat-message-team .chat-bubble {
+  background: var(--cream-dark);
+  color: var(--text);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-time {
+  display: block;
+  font-size: 10px;
+  margin-top: 4px;
+  opacity: 0.6;
+}
+
+.chat-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.chat-toggle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--cream-dark);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+
+.chat-toggle:hover {
+  background: var(--border);
+}
+
+.chat-form {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cream-dark);
+  border-radius: 100px;
+  padding: 4px 4px 4px 18px;
+}
+
+.chat-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font);
+  font-size: 15px;
+  color: var(--text);
+  outline: none;
+  padding: 8px 0;
+}
+
+.chat-input::placeholder {
+  color: var(--text-muted);
+}
+
+.chat-send {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: var(--coral);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+
+.chat-send:hover:not(:disabled) {
+  background: var(--coral-dark);
+}
+
+.chat-send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* --- Responsive --- */
 
 @media (max-width: 768px) {
   .container {
     padding: 0 16px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
   }
 
   .stats-row {
@@ -714,5 +1255,14 @@ a {
 
   .header {
     padding: 16px 0 12px;
+  }
+
+  .chat-input-row {
+    padding: 10px 16px;
+  }
+
+  .chat-messages {
+    max-height: 250px;
+    padding: 16px 16px 8px;
   }
 }

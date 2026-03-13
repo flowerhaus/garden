@@ -1,5 +1,21 @@
-import ProjectList from "@/components/ProjectList";
+import Calendar from "@/components/Calendar";
+import ProjectFolders from "@/components/ProjectFolders";
+import FileShare from "@/components/FileShare";
+import ChatBar from "@/components/ChatBar";
 
 export default function DashboardPage() {
-  return <ProjectList />;
+  return (
+    <>
+      <div className="dashboard-grid">
+        <div className="dashboard-main">
+          <ProjectFolders />
+          <FileShare />
+        </div>
+        <div className="dashboard-sidebar">
+          <Calendar />
+        </div>
+      </div>
+      <ChatBar />
+    </>
+  );
 }
