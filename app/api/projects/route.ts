@@ -1,11 +1,34 @@
 import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
 import { getSession } from "@/lib/auth";
 import { getCachedProjects, syncProjectsForUser } from "@/lib/notion";
 
+// TODO: Genaktiver auth-check når login er klar
+const DEMO_USER_EMAIL = "hello@flowerhaus.dk";
+
 export async function GET(request: Request) {
-  const user = await getSession();
+  let user = await getSession();
+
+  // Fallback til demo-bruger hvis ingen session
   if (!user) {
-    return NextResponse.json({ error: "Ikke logget ind" }, { status: 401 });
+    const result = await db.execute({
+      sql: `SELECT * FROM users WHERE email = ?`,
+      args: [DEMO_USER_EMAIL],
+    });
+    if (result.rows.length > 0) {
+      const row = result.rows[0];
+      user = {
+        id: row.id as string,
+        email: row.email as string,
+        name: row.name as string | null,
+        notion_filter: row.notion_filter as string | null,
+        created_at: row.created_at as string,
+      };
+    }
+  }
+
+  if (!user) {
+    return NextResponse.json({ error: "Ingen bruger fundet" }, { status: 401 });
   }
 
   const { searchParams } = new URL(request.url);
@@ -21,7 +44,6 @@ export async function GET(request: Request) {
 
   const projects = await getCachedProjects(user.id);
 
-  // Sync fra Notion hvis ingen cached projekter
   if (projects.length === 0) {
     const synced = await syncProjectsForUser(
       user.id,

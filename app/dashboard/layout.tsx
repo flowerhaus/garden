@@ -1,6 +1,8 @@
-import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import Header from "@/components/Header";
+
+// TODO: Genaktiver auth-check når login er klar
+// import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
   children,
@@ -8,11 +10,13 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const user = await getSession();
-  if (!user) redirect("/");
 
   return (
     <div className="container">
-      <Header userName={user.name} userEmail={user.email} />
+      <Header
+        userName={user?.name ?? "Demo"}
+        userEmail={user?.email ?? "demo@flowerhaus.dk"}
+      />
       {children}
     </div>
   );
