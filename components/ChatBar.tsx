@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect, FormEvent } from "react";
-import { Button, ScrollShadow } from "@heroui/react";
 
 interface Message {
   id: string;
@@ -91,53 +90,39 @@ export default function ChatBar() {
   }
 
   return (
-    <div className={`fixed bottom-0 left-0 right-0 z-[100] bg-default border-t border-default-300 ${expanded ? "shadow-[0_-4px_24px_rgba(0,0,0,0.08)]" : ""}`}>
+    <div className={`chat-bar ${expanded ? "chat-bar-expanded" : ""}`}>
       {expanded && (
-        <ScrollShadow className="max-h-[280px] overflow-y-auto px-4 sm:px-10 pt-4 pb-1">
-          <div className="flex flex-col gap-1.5">
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex ${msg.sender === "client" ? "justify-end" : "justify-start"}`}
-              >
-                <div
-                  className={`max-w-[60%] px-3.5 py-2 rounded-[14px] text-[13px] leading-relaxed ${
-                    msg.sender === "client"
-                      ? "bg-primary text-primary-foreground rounded-br-[4px]"
-                      : "bg-default-200 text-foreground rounded-bl-[4px]"
-                  }`}
-                >
-                  <p>{msg.text}</p>
-                  {msg.time && <span className="block text-[9px] mt-0.5 opacity-50">{msg.time}</span>}
-                </div>
+        <div className="chat-messages">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`chat-message ${msg.sender === "client" ? "chat-message-client" : "chat-message-team"}`}
+            >
+              <div className="chat-bubble">
+                <p>{msg.text}</p>
+                {msg.time && <span className="chat-time">{msg.time}</span>}
               </div>
-            ))}
-            {loading && (
-              <div className="flex justify-start">
-                <div className="bg-default-200 text-foreground px-3.5 py-2 rounded-[14px] rounded-bl-[4px] text-[13px] italic text-default-500">
-                  Garden skriver...
-                </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-        </ScrollShadow>
+            </div>
+          ))}
+          {loading && (
+            <div className="chat-message chat-message-team">
+              <div className="chat-bubble chat-typing">Garden skriver...</div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
       )}
-      <div className="flex items-center gap-2 px-4 sm:px-10 py-2.5">
-        <Button
-          isIconOnly
-          size="sm"
-          variant="bordered"
-          radius="full"
-          className="shrink-0 text-[9px] text-default-500 border-default-300 hover:border-primary"
-          onPress={() => setExpanded(!expanded)}
+      <div className="chat-input-row">
+        <button
+          className="chat-toggle"
+          onClick={() => setExpanded(!expanded)}
         >
           {expanded ? "\u25BC" : "\u25B2"}
-        </Button>
-        <span className="text-xs font-bold text-primary uppercase tracking-wider shrink-0">Garden</span>
-        <form className="flex-1 flex items-center gap-2 border border-default-300 rounded-full pl-4 pr-1 py-0.5 focus-within:border-primary transition-colors" onSubmit={handleSubmit}>
+        </button>
+        <div className="chat-flora-label">Garden</div>
+        <form className="chat-form" onSubmit={handleSubmit}>
           <input
-            className="flex-1 border-none bg-transparent text-sm text-foreground outline-none py-1.5 placeholder:text-default-500"
+            className="chat-input"
             type="text"
             placeholder="Spørg Garden om dine projekter..."
             value={input}
@@ -145,13 +130,10 @@ export default function ChatBar() {
             onFocus={() => setExpanded(true)}
             disabled={loading}
           />
-          <Button
-            isIconOnly
+          <button
+            className="chat-send"
             type="submit"
-            size="sm"
-            radius="full"
-            className="bg-secondary text-white shrink-0"
-            isDisabled={!input.trim() || loading}
+            disabled={!input.trim() || loading}
           >
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
               <path
@@ -162,7 +144,7 @@ export default function ChatBar() {
                 strokeLinejoin="round"
               />
             </svg>
-          </Button>
+          </button>
         </form>
       </div>
     </div>

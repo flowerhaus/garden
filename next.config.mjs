@@ -1,6 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  transpilePackages: ["@heroui/react", "@heroui/theme"],
-};
+const nextConfig = {};
 
 export default nextConfig;

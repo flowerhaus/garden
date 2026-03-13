@@ -1,6 +1,9 @@
 import { getSession } from "@/lib/auth";
 import Header from "@/components/Header";
 
+// TODO: Genaktiver auth-check når login er klar
+// import { redirect } from "next/navigation";
+
 export default async function DashboardLayout({
   children,
 }: {
@@ -9,10 +12,10 @@ export default async function DashboardLayout({
   const user = await getSession();
 
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8">
+    <div className="container">
       <Header
-        userName={user?.name ?? "Isabella Lewis"}
-        userEmail={user?.email ?? "demo@edtech.dk"}
+        userName={user?.name ?? "Demo"}
+        userEmail={user?.email ?? "demo@flowerhaus.dk"}
       />
       {children}
     </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { Input, Button } from "@heroui/react";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -32,33 +31,29 @@ export default function LoginForm() {
 
   if (sent) {
     return (
-      <div className="text-center py-5">
-        <div className="text-2xl mb-2">&#9993;</div>
-        <h3 className="text-lg font-semibold mb-1.5">Tjek din email</h3>
-        <p className="text-sm text-default-500">
-          Vi har sendt et login-link til <strong className="text-foreground">{email}</strong>
-        </p>
+      <div className="login-success">
+        <div className="login-success-icon">&#9993;</div>
+        <h3>Tjek din email</h3>
+        <p>Vi har sendt et login-link til <strong>{email}</strong></p>
       </div>
     );
   }
 
   return (
-    <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
-      {error && (
-        <div className="bg-danger-100 text-danger p-2.5 rounded-medium text-[13px]">{error}</div>
-      )}
-      <Input
+    <form className="login-form" onSubmit={handleSubmit}>
+      {error && <div className="login-error">{error}</div>}
+      <input
+        className="input"
         type="email"
         placeholder="din@email.dk"
         value={email}
-        onValueChange={setEmail}
-        isRequired
+        onChange={(e) => setEmail(e.target.value)}
+        required
         autoFocus
-        variant="bordered"
       />
-      <Button color="primary" type="submit" isLoading={loading} className="font-semibold">
+      <button className="btn btn-primary" type="submit" disabled={loading}>
         {loading ? "Sender..." : "Send login-link"}
-      </Button>
+      </button>
     </form>
   );
 }
