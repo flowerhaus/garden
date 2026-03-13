@@ -13,7 +13,7 @@ export default function ChatBar() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "welcome",
-      text: "Hej! Jeg er Flora, Flowerhaus' assistent. Spørg mig om dine projekter, aftaler eller andet.",
+      text: "Hej! Jeg er Gardens AI-assistent. Spørg mig om dine projekter, aftaler eller leverancer.",
       sender: "flora",
       time: "",
     },
@@ -106,7 +106,7 @@ export default function ChatBar() {
           ))}
           {loading && (
             <div className="chat-message chat-message-team">
-              <div className="chat-bubble chat-typing">Flora skriver...</div>
+              <div className="chat-bubble chat-typing">Garden skriver...</div>
             </div>
           )}
           <div ref={messagesEndRef} />
@@ -119,12 +119,12 @@ export default function ChatBar() {
         >
           {expanded ? "\u25BC" : "\u25B2"}
         </button>
-        <div className="chat-flora-label">Flora</div>
+        <div className="chat-flora-label">Garden</div>
         <form className="chat-form" onSubmit={handleSubmit}>
           <input
             className="chat-input"
             type="text"
-            placeholder="Spørg Flora om dine projekter..."
+            placeholder="Spørg Garden om dine projekter..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onFocus={() => setExpanded(true)}
