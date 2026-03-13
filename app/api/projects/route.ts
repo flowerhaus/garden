@@ -1,56 +1,78 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { getSession } from "@/lib/auth";
-import { getCachedProjects, syncProjectsForUser } from "@/lib/notion";
+// import { db } from "@/lib/db";
+// import { getSession } from "@/lib/auth";
+// import { getCachedProjects, syncProjectsForUser } from "@/lib/notion";
 
-// TODO: Genaktiver auth-check når login er klar
-const DEMO_USER_EMAIL = "hello@flowerhaus.dk";
+// TODO: Fjern demo-data og genaktiver Notion-integration
+const DEMO_PROJECTS = [
+  {
+    id: "1",
+    notion_id: null,
+    user_id: "demo",
+    title: "Website Redesign",
+    status: "active",
+    description:
+      "Komplet redesign af hjemmeside med nyt brand identity, responsivt layout og optimeret brugeroplevelse.",
+    updated_at: "2026-03-12T10:30:00Z",
+    notion_data: null,
+  },
+  {
+    id: "2",
+    notion_id: null,
+    user_id: "demo",
+    title: "Brand Identity",
+    status: "active",
+    description:
+      "Udvikling af nyt logo, farvepalette, typografi og brand guidelines til brug på tværs af alle kanaler.",
+    updated_at: "2026-03-11T14:00:00Z",
+    notion_data: null,
+  },
+  {
+    id: "3",
+    notion_id: null,
+    user_id: "demo",
+    title: "E-commerce Platform",
+    status: "active",
+    description:
+      "Opsætning af webshop med produktkatalog, betaling og ordrehåndtering. Integration med lagersystem.",
+    updated_at: "2026-03-10T09:15:00Z",
+    notion_data: null,
+  },
+  {
+    id: "4",
+    notion_id: null,
+    user_id: "demo",
+    title: "Social Media Strategi",
+    status: "paused",
+    description:
+      "Udarbejdelse af content-plan og strategi for Instagram, LinkedIn og Facebook. Afventer brand guidelines.",
+    updated_at: "2026-02-28T16:45:00Z",
+    notion_data: null,
+  },
+  {
+    id: "5",
+    notion_id: null,
+    user_id: "demo",
+    title: "SEO Optimering",
+    status: "completed",
+    description:
+      "Teknisk SEO-audit, keyword research og on-page optimering af alle landingssider. Rapport afleveret.",
+    updated_at: "2026-02-15T11:20:00Z",
+    notion_data: null,
+  },
+  {
+    id: "6",
+    notion_id: null,
+    user_id: "demo",
+    title: "Fotoshoot Produkter",
+    status: "completed",
+    description:
+      "Professionel produktfotografering af hele sortimentet til brug på webshop og sociale medier.",
+    updated_at: "2026-01-22T13:00:00Z",
+    notion_data: null,
+  },
+];
 
-export async function GET(request: Request) {
-  let user = await getSession();
-
-  // Fallback til demo-bruger hvis ingen session
-  if (!user) {
-    const result = await db.execute({
-      sql: `SELECT * FROM users WHERE email = ?`,
-      args: [DEMO_USER_EMAIL],
-    });
-    if (result.rows.length > 0) {
-      const row = result.rows[0];
-      user = {
-        id: row.id as string,
-        email: row.email as string,
-        name: row.name as string | null,
-        notion_filter: row.notion_filter as string | null,
-        created_at: row.created_at as string,
-      };
-    }
-  }
-
-  if (!user) {
-    return NextResponse.json({ error: "Ingen bruger fundet" }, { status: 401 });
-  }
-
-  const { searchParams } = new URL(request.url);
-  const refresh = searchParams.get("refresh") === "true";
-
-  if (refresh) {
-    const projects = await syncProjectsForUser(
-      user.id,
-      user.notion_filter || undefined
-    );
-    return NextResponse.json(projects);
-  }
-
-  const projects = await getCachedProjects(user.id);
-
-  if (projects.length === 0) {
-    const synced = await syncProjectsForUser(
-      user.id,
-      user.notion_filter || undefined
-    );
-    return NextResponse.json(synced);
-  }
-
-  return NextResponse.json(projects);
+export async function GET() {
+  return NextResponse.json(DEMO_PROJECTS);
 }
