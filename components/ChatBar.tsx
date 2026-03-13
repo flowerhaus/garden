@@ -5,52 +5,33 @@ import { useState, useRef, useEffect, FormEvent } from "react";
 interface Message {
   id: string;
   text: string;
-  sender: "client" | "team";
+  sender: "client" | "flora";
   time: string;
 }
 
-const DEMO_MESSAGES: Message[] = [
-  {
-    id: "1",
-    text: "Hej! Vi har uploadet de nye logo-udkast til jeres mappe.",
-    sender: "team",
-    time: "10:32",
-  },
-  {
-    id: "2",
-    text: "Fedt, tak! Vi kigger på dem i dag og vender tilbage.",
-    sender: "client",
-    time: "11:15",
-  },
-  {
-    id: "3",
-    text: "Vi foretrækker version 2 - kan I lave den i mørk variant også?",
-    sender: "client",
-    time: "14:03",
-  },
-  {
-    id: "4",
-    text: "Selvfølgelig! Vi sender en opdateret version i morgen.",
-    sender: "team",
-    time: "14:20",
-  },
-];
-
 export default function ChatBar() {
-  const [messages, setMessages] = useState<Message[]>(DEMO_MESSAGES);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: "welcome",
+      text: "Hej! Jeg er Flora, Flowerhaus' assistent. Spørg mig om dine projekter, aftaler eller andet.",
+      sender: "flora",
+      time: "",
+    },
+  ]);
   const [input, setInput] = useState("");
   const [expanded, setExpanded] = useState(false);
+  const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, expanded]);
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || loading) return;
 
-    const newMsg: Message = {
+    const userMsg: Message = {
       id: Date.now().toString(),
       text: input.trim(),
       sender: "client",
@@ -60,8 +41,52 @@ export default function ChatBar() {
       }),
     };
 
-    setMessages([...messages, newMsg]);
+    const currentInput = input.trim();
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
+    setLoading(true);
+    setExpanded(true);
+
+    try {
+      const history = messages
+        .filter((m) => m.id !== "welcome")
+        .map((m) => ({
+          role: m.sender === "client" ? "user" : "assistant",
+          text: m.text,
+        }));
+
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: currentInput, history }),
+      });
+
+      const data = await res.json();
+
+      const floraMsg: Message = {
+        id: (Date.now() + 1).toString(),
+        text: data.reply || "Beklager, jeg kunne ikke svare.",
+        sender: "flora",
+        time: new Date().toLocaleTimeString("da-DK", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      };
+
+      setMessages((prev) => [...prev, floraMsg]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          text: "Beklager, der opstod en fejl. Prøv igen.",
+          sender: "flora",
+          time: "",
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -75,10 +100,15 @@ export default function ChatBar() {
             >
               <div className="chat-bubble">
                 <p>{msg.text}</p>
-                <span className="chat-time">{msg.time}</span>
+                {msg.time && <span className="chat-time">{msg.time}</span>}
               </div>
             </div>
           ))}
+          {loading && (
+            <div className="chat-message chat-message-team">
+              <div className="chat-bubble chat-typing">Flora skriver...</div>
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
       )}
@@ -86,22 +116,33 @@ export default function ChatBar() {
         <button
           className="chat-toggle"
           onClick={() => setExpanded(!expanded)}
-          title={expanded ? "Skjul chat" : "Vis chat"}
         >
           {expanded ? "\u25BC" : "\u25B2"}
         </button>
+        <div className="chat-flora-label">Flora</div>
         <form className="chat-form" onSubmit={handleSubmit}>
           <input
             className="chat-input"
             type="text"
-            placeholder="Skriv en besked..."
+            placeholder="Spørg Flora om dine projekter..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onFocus={() => setExpanded(true)}
+            disabled={loading}
           />
-          <button className="chat-send" type="submit" disabled={!input.trim()}>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M8 14V2M8 2L3 7M8 2L13 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <button
+            className="chat-send"
+            type="submit"
+            disabled={!input.trim() || loading}
+          >
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path
+                d="M8 14V2M8 2L3 7M8 2L13 7"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
         </form>

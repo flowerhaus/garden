@@ -516,6 +516,208 @@ a { color: inherit; text-decoration: none; }
 .status-badge.completed { background: var(--status-completed-bg); color: var(--status-completed); }
 .status-badge.completed::before { background: var(--status-completed); }
 
+/* --- Approvals --- */
+
+.approvals-section {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.approvals-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.approvals-title {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.approvals-badge {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--coral);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.approvals-empty {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.approval-item {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.approval-item:last-of-type { border-bottom: none; }
+
+.approval-item-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.approval-item-info { flex: 1; }
+
+.approval-item-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.approval-item-desc {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.approval-item-date {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.approval-wimio-link {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--olive);
+  margin-bottom: 10px;
+  transition: color 0.15s;
+}
+
+.approval-wimio-link:hover { color: var(--olive-dark); }
+
+.approval-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.approval-btn-approve,
+.approval-btn-revision,
+.approval-btn-confirm,
+.approval-btn-cancel {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 100px;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.approval-btn-approve {
+  background: var(--olive);
+  color: var(--cream);
+}
+
+.approval-btn-approve:hover { background: var(--olive-dark); }
+
+.approval-btn-revision {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.approval-btn-revision:hover { border-color: var(--coral); color: var(--coral); }
+
+.approval-sign {
+  margin-top: 8px;
+}
+
+.approval-sign-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text);
+  background: transparent;
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.approval-sign-input:focus { border-color: var(--olive); }
+
+.approval-sign-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.approval-btn-confirm {
+  background: var(--olive);
+  color: var(--cream);
+}
+
+.approval-btn-confirm:hover:not(:disabled) { background: var(--olive-dark); }
+.approval-btn-confirm:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.approval-btn-cancel {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.approval-btn-cancel:hover { color: var(--text); }
+
+.approval-confirmed {
+  padding: 10px 14px;
+  background: var(--status-active-bg);
+  color: var(--status-active);
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  margin-top: 12px;
+}
+
+.approval-done-list {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.approval-done-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+}
+
+.approval-done-title {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.approval-done-status {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.approval-done-status.approved { color: var(--olive); }
+.approval-done-status.revision { color: var(--coral); }
+
 /* --- Chat Bar --- */
 
 .chat-bar {
@@ -639,6 +841,20 @@ a { color: inherit; text-decoration: none; }
 
 .chat-send:hover:not(:disabled) { background: var(--coral-dark); }
 .chat-send:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.chat-flora-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--olive);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+.chat-typing {
+  font-style: italic;
+  color: var(--text-muted);
+}
 
 /* --- Empty State --- */
 
