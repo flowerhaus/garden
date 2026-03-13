@@ -20,9 +20,14 @@ export default function ProjectCard({ project }: { project: Project }) {
   return (
     <div className="project-card">
       <div className="project-card-header">
-        <h3 className="project-card-title">{project.title}</h3>
+        <div>
+          <h3 className="project-card-title">{project.title}</h3>
+          <span className="project-card-category">
+            {statusLabels[project.status] || project.status}
+          </span>
+        </div>
         <span className={`status-badge ${project.status}`}>
-          {statusLabels[project.status] || project.status}
+          {statusLabels[project.status]}
         </span>
       </div>
       {project.description && (
@@ -32,6 +37,7 @@ export default function ProjectCard({ project }: { project: Project }) {
         <span className="project-card-date">
           {formatDate(project.updated_at)}
         </span>
+        <div className="project-card-arrow">&rarr;</div>
       </div>
     </div>
   );
