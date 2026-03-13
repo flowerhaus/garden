@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Card, CardBody, Chip } from "@heroui/react";
 
 interface ProjectItem {
   id: string;
@@ -63,60 +64,61 @@ const statusLabels: Record<string, string> = {
   completed: "Afsluttet",
 };
 
+const statusColors: Record<string, "success" | "warning" | "default"> = {
+  active: "success",
+  paused: "warning",
+  completed: "default",
+};
+
 export default function ProjectFolders() {
   const [openFolder, setOpenFolder] = useState<string | null>(null);
 
   return (
-    <div className="folders-section">
-      <div className="folders-header">
-        <h2 className="folders-title">
-          Projekt
-          <strong>Mapper</strong>
-        </h2>
-      </div>
-      <div className="folders-grid">
-        {DEMO_FOLDERS.map((folder) => (
-          <div key={folder.id} className="folder-card-wrapper">
-            <button
-              className={`folder-card ${openFolder === folder.id ? "folder-card-open" : ""}`}
-              onClick={() =>
-                setOpenFolder(openFolder === folder.id ? null : folder.id)
-              }
-            >
-              <div className="folder-card-icon">{folder.icon}</div>
-              <div className="folder-card-info">
-                <span className="folder-card-name">{folder.name}</span>
-                <span className="folder-card-count">
-                  {folder.projects.length} projekt
-                  {folder.projects.length !== 1 ? "er" : ""}
-                </span>
-              </div>
-              <div className="folder-card-chevron">
-                {openFolder === folder.id ? "\u25B4" : "\u25BE"}
-              </div>
-            </button>
-            {openFolder === folder.id && (
-              <div className="folder-projects">
-                {folder.projects.map((project) => (
-                  <div key={project.id} className="folder-project-row">
-                    <div className="folder-project-info">
-                      <span className="folder-project-title">
-                        {project.title}
-                      </span>
-                      <span className="folder-project-date">
-                        {project.updated}
-                      </span>
+    <Card shadow="none">
+      <CardBody className="p-5">
+        <div className="text-xs font-semibold uppercase tracking-wider text-default-500 mb-3.5">Projektmapper</div>
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] max-sm:grid-cols-1 gap-2">
+          {DEMO_FOLDERS.map((folder) => (
+            <div key={folder.id} className="flex flex-col">
+              <button
+                className={`flex items-center gap-3 px-3.5 py-3 rounded-medium border border-default-300 text-left w-full transition-colors hover:border-primary ${
+                  openFolder === folder.id ? "border-primary rounded-b-none border-b-transparent" : ""
+                }`}
+                onClick={() => setOpenFolder(openFolder === folder.id ? null : folder.id)}
+              >
+                <span className="text-base shrink-0">{folder.icon}</span>
+                <div className="flex-1">
+                  <span className="block text-sm font-semibold text-foreground">{folder.name}</span>
+                  <span className="text-[11px] text-default-500">
+                    {folder.projects.length} projekt{folder.projects.length !== 1 ? "er" : ""}
+                  </span>
+                </div>
+                <span className="text-xs text-default-500">{openFolder === folder.id ? "\u25B4" : "\u25BE"}</span>
+              </button>
+              {openFolder === folder.id && (
+                <div className="border border-primary border-t-0 rounded-b-medium px-3.5 py-1 pb-2">
+                  {folder.projects.map((project, i) => (
+                    <div
+                      key={project.id}
+                      className={`flex items-center justify-between gap-3 py-2 ${
+                        i < folder.projects.length - 1 ? "border-b border-default-300" : ""
+                      }`}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <span className="block text-[13px] font-medium text-foreground">{project.title}</span>
+                        <span className="text-[11px] text-default-500">{project.updated}</span>
+                      </div>
+                      <Chip size="sm" variant="flat" color={statusColors[project.status]} className="text-[10px] font-semibold uppercase tracking-wider">
+                        {statusLabels[project.status]}
+                      </Chip>
                     </div>
-                    <span className={`status-badge ${project.status}`}>
-                      {statusLabels[project.status]}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </CardBody>
+    </Card>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Avatar, Button, Navbar, NavbarBrand, NavbarContent } from "@heroui/react";
 
 interface HeaderProps {
   userName: string | null;
@@ -22,17 +23,17 @@ export default function Header({ userName, userEmail }: HeaderProps) {
   }
 
   return (
-    <header className="header">
-      <div className="header-brand">
-        <div className="header-avatar">{initials}</div>
-        <span className="header-title">Garden</span>
-      </div>
-      <div className="header-user">
-        <span className="header-name">{userName || userEmail}</span>
-        <button className="btn-icon" onClick={handleLogout} title="Log ud">
+    <Navbar maxWidth="full" classNames={{ wrapper: "px-0" }} isBordered={false} className="bg-transparent shadow-none">
+      <NavbarBrand className="gap-2">
+        <Avatar name={initials} size="sm" classNames={{ base: "bg-primary text-primary-foreground text-xs font-semibold" }} />
+        <span className="text-lg font-semibold tracking-tight text-foreground">Garden</span>
+      </NavbarBrand>
+      <NavbarContent justify="end" className="gap-3">
+        <span className="text-sm text-default-500">{userName || userEmail}</span>
+        <Button size="sm" variant="light" onPress={handleLogout} className="text-xs uppercase tracking-wider font-semibold text-default-500">
           Log ud
-        </button>
-      </div>
-    </header>
+        </Button>
+      </NavbarContent>
+    </Navbar>
   );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import { Card, CardBody, Badge, Button } from "@heroui/react";
+
 const DEMO_DECISIONS = [
   {
     id: "d1",
@@ -26,25 +28,31 @@ const DEMO_DECISIONS = [
 
 export default function DecisionQueue() {
   return (
-    <div className="decision-queue">
-      <div className="decision-queue-header">
-        <span className="decision-queue-title">Vi har brug for dit valg her</span>
-        <span className="decision-queue-count">{DEMO_DECISIONS.length}</span>
-      </div>
-      <div className="decision-queue-grid">
-        {DEMO_DECISIONS.map((item) => (
-          <div key={item.id} className="decision-queue-item">
-            <div className="decision-queue-item-num">{item.num}</div>
-            <div className="decision-queue-item-body">
-              <span className="decision-queue-item-title">{item.title}</span>
-              <span className="decision-queue-item-desc">{item.description}</span>
+    <Card className="mb-3 bg-[#f5ece7]" shadow="none">
+      <CardBody className="p-5">
+        <div className="flex items-center gap-2.5 mb-3.5">
+          <span className="text-[15px] font-semibold text-foreground">Vi har brug for dit valg her</span>
+          <Badge content={DEMO_DECISIONS.length} color="secondary" size="sm" shape="circle">
+            <span />
+          </Badge>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-2.5">
+          {DEMO_DECISIONS.map((item) => (
+            <div key={item.id} className="flex items-start gap-3 p-3.5 bg-white rounded-medium">
+              <div className="w-7 h-7 rounded-full bg-secondary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                {item.num}
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className="block text-sm font-semibold text-foreground">{item.title}</span>
+                <span className="block text-xs text-default-500 mt-0.5">{item.description}</span>
+              </div>
+              <Button size="sm" color="primary" radius="full" className="shrink-0 mt-0.5 text-xs font-semibold">
+                {item.actionLabel} &rarr;
+              </Button>
             </div>
-            <button className="decision-queue-item-action">
-              {item.actionLabel} &rarr;
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
+          ))}
+        </div>
+      </CardBody>
+    </Card>
   );
 }

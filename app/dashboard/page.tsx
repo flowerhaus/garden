@@ -14,14 +14,14 @@ export default function DashboardPage() {
     <>
       <DecisionQueue />
       <MilestoneTimeline />
-      <div className="dashboard-grid">
-        <div className="dashboard-main">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-3 pb-20">
+        <div className="flex flex-col gap-3">
           <ProjectFolders />
           <Moodboard />
           <Approvals />
           <FileShare />
         </div>
-        <div className="dashboard-sidebar">
+        <div className="flex flex-col gap-3">
           <StatusBarometer />
           <Calendar />
           <QuickLinks />

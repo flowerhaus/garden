@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Card, CardBody, Button, Input } from "@heroui/react";
 
 interface ApprovalItem {
   id: string;
@@ -79,7 +80,6 @@ export default function Approvals() {
     setSigning(null);
     setConfirmed(id);
 
-    // Send bekræftelsesmail
     try {
       await fetch("/api/approvals", {
         method: "POST",
@@ -91,7 +91,7 @@ export default function Approvals() {
         }),
       });
     } catch {
-      // Stille fejl - godkendelsen er stadig gemt lokalt
+      // Stille fejl
     }
 
     setTimeout(() => setConfirmed(null), 3000);
@@ -101,102 +101,119 @@ export default function Approvals() {
   const done = items.filter((i) => i.status !== "pending");
 
   return (
-    <div className="approvals-section">
-      <div className="approvals-header">
-        <span className="approvals-title">Godkendelser</span>
-        {pending.length > 0 && (
-          <span className="approvals-badge">{pending.length}</span>
-        )}
-      </div>
-
-      {pending.length === 0 && done.length === 0 && (
-        <p className="approvals-empty">Ingen godkendelser lige nu.</p>
-      )}
-
-      {pending.map((item) => (
-        <div key={item.id} className="approval-item">
-          <div className="approval-item-top">
-            <div className="approval-item-info">
-              <span className="approval-item-title">{item.title}</span>
-              <span className="approval-item-desc">{item.description}</span>
+    <Card shadow="none">
+      <CardBody className="p-5">
+        <div className="flex items-center gap-2 mb-3.5">
+          <span className="text-xs font-semibold uppercase tracking-wider text-default-500">Godkendelser</span>
+          {pending.length > 0 && (
+            <div className="w-5 h-5 rounded-full bg-secondary text-white text-[11px] font-bold flex items-center justify-center">
+              {pending.length}
             </div>
-            <span className="approval-item-date">{item.date}</span>
-          </div>
-
-          {item.wimioUrl && (
-            <a
-              href={item.wimioUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="approval-wimio-link"
-            >
-              Se video-feedback &rarr;
-            </a>
           )}
+        </div>
 
-          {signing === item.id ? (
-            <div className="approval-sign">
-              <input
-                className="approval-sign-input"
-                type="text"
-                placeholder="Skriv dit fulde navn"
-                value={signName}
-                onChange={(e) => setSignName(e.target.value)}
-                autoFocus
-              />
-              <div className="approval-sign-actions">
-                <button
-                  className="approval-btn-confirm"
-                  onClick={() => handleSign(item.id)}
-                  disabled={!signName.trim()}
+        {pending.length === 0 && done.length === 0 && (
+          <p className="text-[13px] text-default-500">Ingen godkendelser lige nu.</p>
+        )}
+
+        {pending.map((item, i) => (
+          <div key={item.id} className={`py-3.5 ${i < pending.length - 1 ? "border-b border-default-300" : ""}`}>
+            <div className="flex items-start justify-between gap-3 mb-2">
+              <div className="flex-1">
+                <span className="block text-sm font-semibold text-foreground">{item.title}</span>
+                <span className="block text-xs text-default-500 mt-0.5">{item.description}</span>
+              </div>
+              <span className="text-[11px] text-default-500 whitespace-nowrap">{item.date}</span>
+            </div>
+
+            {item.wimioUrl && (
+              <a
+                href={item.wimioUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block text-xs font-medium text-primary mb-2.5 hover:text-primary-600 transition-colors"
+              >
+                Se video-feedback &rarr;
+              </a>
+            )}
+
+            {signing === item.id ? (
+              <div className="mt-2">
+                <Input
+                  size="sm"
+                  variant="bordered"
+                  placeholder="Skriv dit fulde navn"
+                  value={signName}
+                  onValueChange={setSignName}
+                  autoFocus
+                  classNames={{ input: "italic" }}
+                />
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    size="sm"
+                    color="primary"
+                    radius="full"
+                    className="text-xs font-semibold"
+                    onPress={() => handleSign(item.id)}
+                    isDisabled={!signName.trim()}
+                  >
+                    Godkend
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="light"
+                    radius="full"
+                    className="text-xs font-semibold text-default-500"
+                    onPress={() => setSigning(null)}
+                  >
+                    Annuller
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  color="primary"
+                  radius="full"
+                  className="text-xs font-semibold"
+                  onPress={() => handleApprove(item.id)}
                 >
                   Godkend
-                </button>
-                <button
-                  className="approval-btn-cancel"
-                  onClick={() => setSigning(null)}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="bordered"
+                  radius="full"
+                  className="text-xs font-semibold text-default-500 border-default-300 hover:border-danger hover:text-danger"
+                  onPress={() => handleRequestRevision(item.id)}
                 >
-                  Annuller
-                </button>
+                  Anmod om rettelse
+                </Button>
               </div>
-            </div>
-          ) : (
-            <div className="approval-actions">
-              <button
-                className="approval-btn-approve"
-                onClick={() => handleApprove(item.id)}
-              >
-                Godkend
-              </button>
-              <button
-                className="approval-btn-revision"
-                onClick={() => handleRequestRevision(item.id)}
-              >
-                Anmod om rettelse
-              </button>
-            </div>
-          )}
-        </div>
-      ))}
+            )}
+          </div>
+        ))}
 
-      {confirmed && (
-        <div className="approval-confirmed">Godkendt og bekræftelse sendt</div>
-      )}
+        {confirmed && (
+          <div className="p-2.5 bg-success/20 text-success rounded-medium text-xs font-semibold text-center mt-3">
+            Godkendt og bekræftelse sendt
+          </div>
+        )}
 
-      {done.length > 0 && (
-        <div className="approval-done-list">
-          {done.map((item) => (
-            <div key={item.id} className="approval-done-item">
-              <span className="approval-done-title">{item.title}</span>
-              <span
-                className={`approval-done-status ${item.status}`}
-              >
-                {item.status === "approved" ? "Godkendt" : "Rettelse"}
-              </span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+        {done.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-default-300">
+            {done.map((item) => (
+              <div key={item.id} className="flex items-center justify-between py-1.5">
+                <span className="text-[13px] text-default-500">{item.title}</span>
+                <span className={`text-[10px] font-semibold uppercase tracking-wider ${item.status === "approved" ? "text-primary" : "text-secondary"}`}>
+                  {item.status === "approved" ? "Godkendt" : "Rettelse"}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardBody>
+    </Card>
   );
 }
