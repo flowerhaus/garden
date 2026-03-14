@@ -1359,7 +1359,7 @@ a { color: inherit; text-decoration: none; }
 
 .chat-float {
   position: fixed;
-  bottom: 48px;
+  bottom: calc(48px + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -3164,16 +3164,16 @@ a { color: inherit; text-decoration: none; }
 /* --- Responsive --- */
 
 @media (max-width: 768px) {
-  body { padding: 8px; }
+  body { padding: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
   .container { padding: 8px 16px 0; border-radius: 20px; min-height: calc(100vh - 16px); }
-  .dashboard-top { grid-template-columns: 1fr; }
+  .dashboard-top { grid-template-columns: 1fr; padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)); }
   .dashboard-grid { grid-template-columns: 1fr; }
   .folders-grid { grid-template-columns: 1fr; }
   .decision-queue-grid { grid-template-columns: 1fr; }
   .timeline-track { overflow-x: auto; padding-bottom: 8px; }
   .timeline-node { min-width: 100px; }
   .moodboard-grid { grid-template-columns: repeat(2, 1fr); }
-  .chat-float { max-width: calc(100% - 32px); bottom: 20px; }
+  .chat-float { max-width: calc(100% - 32px); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
   .chat-messages { padding: 14px 14px 6px; }
   .header-nav { display: none; }
   .header { padding: 16px 0 12px; }
