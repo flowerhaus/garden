@@ -46,9 +46,7 @@ export default function ProcessBar() {
           onClick={() => setExpanded(!expanded)}
         >
           <div className="process-mobile-active">
-            <div className={`process-phase-dot process-phase--active`}>
-              <div className="process-phase-dot" />
-            </div>
+            <div className="process-mobile-active-dot" />
             <div className="process-mobile-info">
               <span className="process-mobile-label">Fase {activeIndex + 1}/{PHASES.length}</span>
               <span className="process-mobile-name">{activePhase.name}</span>
