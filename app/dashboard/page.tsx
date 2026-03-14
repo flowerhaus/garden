@@ -1,30 +1,32 @@
-import DecisionQueue from "@/components/DecisionQueue";
-import MilestoneTimeline from "@/components/MilestoneTimeline";
-import StatusBarometer from "@/components/StatusBarometer";
+import ProcessBar from "@/components/ProcessBar";
+import UpcomingEvents from "@/components/UpcomingEvents";
+import FileUpload from "@/components/FileUpload";
 import ProjectFolders from "@/components/ProjectFolders";
-import Moodboard from "@/components/Moodboard";
 import Approvals from "@/components/Approvals";
-import FileShare from "@/components/FileShare";
-import Calendar from "@/components/Calendar";
-import QuickLinks from "@/components/QuickLinks";
 import ChatBar from "@/components/ChatBar";
+import TeamNotes from "@/components/TeamNotes";
+import QuickLinks from "@/components/QuickLinks";
+import TaskStatus from "@/components/TaskStatus";
+import TeamOverview from "@/components/TeamOverview";
 
 export default function DashboardPage() {
   return (
     <>
-      <DecisionQueue />
-      <MilestoneTimeline />
-      <div className="dashboard-grid">
-        <div className="dashboard-main">
-          <ProjectFolders />
-          <Moodboard />
-          <Approvals />
-          <FileShare />
+      <ProcessBar />
+      <div className="dashboard-top">
+        <div className="dashboard-column">
+          <UpcomingEvents />
+          <FileUpload />
+          <TeamNotes />
         </div>
-        <div className="dashboard-sidebar">
-          <StatusBarometer />
-          <Calendar />
+        <div className="dashboard-column">
+          <ProjectFolders />
           <QuickLinks />
+        </div>
+        <div className="dashboard-column">
+          <Approvals />
+          <TaskStatus />
+          <TeamOverview />
         </div>
       </div>
       <ChatBar />
