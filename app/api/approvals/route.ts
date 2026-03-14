@@ -1,39 +1,52 @@
-import { NextResponse } from "next/server";
+import { db, Approval } from "@/lib/db";
+import { getSession } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
 
-function getResend() {
-  const { Resend } = require("resend");
-  return new Resend(process.env.RESEND_API_KEY);
+// GET — return all approvals, sorted pending-first
+export async function GET() {
+  try {
+    const result = await db.execute(
+      "SELECT * FROM approvals ORDER BY CASE status WHEN 'pending' THEN 0 ELSE 1 END, created_at DESC"
+    );
+    return NextResponse.json(result.rows as unknown as Approval[]);
+  } catch (error) {
+    console.error("Failed to fetch approvals:", error);
+    return NextResponse.json({ error: "Failed to fetch approvals" }, { status: 500 });
+  }
 }
 
-export async function POST(request: Request) {
-  const { itemTitle, signedBy } = await request.json();
-
-  const teamEmail = process.env.TEAM_EMAIL || "hello@flowerhaus.dk";
-  const now = new Date().toLocaleString("da-DK", {
-    dateStyle: "long",
-    timeStyle: "short",
-  });
-
+// POST — create a new approval
+export async function POST(request: NextRequest) {
   try {
-    const resend = getResend();
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Ikke logget ind" }, { status: 401 });
+    }
 
-    // Mail til teamet
-    await resend.emails.send({
-      from: process.env.EMAIL_FROM || "Garden <noreply@resend.dev>",
-      to: teamEmail,
-      subject: `Godkendt: ${itemTitle}`,
-      html: `
-        <div style="font-family: sans-serif; max-width: 480px; padding: 32px 20px;">
-          <p style="color: #5a6b4a; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Godkendelse modtaget</p>
-          <h2 style="color: #2a2c24; margin: 8px 0 16px;">${itemTitle}</h2>
-          <p style="color: #5c5f52;"><strong>${signedBy}</strong> har godkendt denne leverance.</p>
-          <p style="color: #858877; font-size: 13px; margin-top: 16px;">${now}</p>
-        </div>
-      `,
+    const body = await request.json();
+    const { title, description, assigned_to, from_name, attachments } = body;
+
+    if (!title?.trim() || !assigned_to?.trim()) {
+      return NextResponse.json({ error: "Titel og modtager er påkrævet" }, { status: 400 });
+    }
+
+    const id = crypto.randomUUID();
+    const result = await db.execute({
+      sql: `INSERT INTO approvals (id, title, description, from_name, assigned_to, attachments)
+            VALUES (?, ?, ?, ?, ?, ?) RETURNING *`,
+      args: [
+        id,
+        title.trim(),
+        description?.trim() || null,
+        from_name?.trim() || session.name || session.email,
+        assigned_to.trim().toLowerCase(),
+        attachments ? JSON.stringify(attachments) : null,
+      ],
     });
 
-    return NextResponse.json({ sent: true });
-  } catch {
-    return NextResponse.json({ sent: false });
+    return NextResponse.json(result.rows[0] as unknown as Approval, { status: 201 });
+  } catch (error) {
+    console.error("Failed to create approval:", error);
+    return NextResponse.json({ error: "Failed to create approval" }, { status: 500 });
   }
 }

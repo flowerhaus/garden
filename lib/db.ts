@@ -38,3 +38,15 @@ export interface Project {
   updated_at: string | null;
   notion_data: string | null;
 }
+
+export interface Approval {
+  id: string;
+  title: string;
+  description: string | null;
+  from_name: string;
+  assigned_to: string;
+  status: "pending" | "approved" | "rejected";
+  attachments: string | null;
+  created_at: string;
+  resolved_at: string | null;
+}
