@@ -43,10 +43,11 @@
   --font-mono: "JetBrains Mono", monospace;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; max-width: 100%; }
 
-html {
+html, body {
   overflow-x: hidden;
+  overscroll-behavior-x: none;
 }
 
 body {
@@ -59,8 +60,8 @@ body {
   font-size: 14px;
   letter-spacing: -0.01em;
   min-height: 100vh;
+  min-height: -webkit-fill-available;
   padding: 16px;
-  overflow-x: hidden;
 }
 
 .app-wrapper {
@@ -1621,9 +1622,9 @@ a { color: inherit; text-decoration: none; }
 .chat-float {
   position: fixed;
   bottom: calc(48px + env(safe-area-inset-bottom, 0px));
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   max-width: 720px;
   z-index: 200;
   display: flex;
@@ -3434,7 +3435,7 @@ a { color: inherit; text-decoration: none; }
   .timeline-track { overflow-x: auto; padding-bottom: 8px; }
   .timeline-node { min-width: 100px; }
   .moodboard-grid { grid-template-columns: repeat(2, 1fr); }
-  .chat-float { left: 16px; right: 16px; width: auto; max-width: none; transform: none; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
+  .chat-float { left: 16px; right: 16px; max-width: none; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
   .chat-messages { padding: 14px 14px 6px; }
   .header-nav { display: none; }
   .header-right { display: none; }
