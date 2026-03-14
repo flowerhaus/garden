@@ -132,13 +132,8 @@ export default function Approvals() {
           {pending.length > 0 && (
             <span className="approvals-badge">{pending.length}</span>
           )}
+          <button className="approvals-all-btn">Alle godkendelser</button>
         </div>
-
-        {!user && (
-          <div className="approval-login-notice">
-            Log ind for at godkende eller afvise
-          </div>
-        )}
 
         <div className="approvals-list">
           {pending.map((item) => (

@@ -6,8 +6,6 @@ import Approvals from "@/components/Approvals";
 import ChatBar from "@/components/ChatBar";
 import TeamNotes from "@/components/TeamNotes";
 import QuickLinks from "@/components/QuickLinks";
-import TaskStatus from "@/components/TaskStatus";
-import TeamOverview from "@/components/TeamOverview";
 
 export default function DashboardPage() {
   return (
@@ -17,16 +15,14 @@ export default function DashboardPage() {
         <div className="dashboard-column">
           <UpcomingEvents />
           <FileUpload />
-          <TeamNotes />
         </div>
         <div className="dashboard-column">
           <ProjectFolders />
-          <QuickLinks />
+          <TeamNotes />
         </div>
         <div className="dashboard-column">
           <Approvals />
-          <TaskStatus />
-          <TeamOverview />
+          <QuickLinks />
         </div>
       </div>
       <ChatBar />
