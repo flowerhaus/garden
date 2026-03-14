@@ -49,7 +49,9 @@ const NAV_LINKS = [
 export default function Header({ userName, userEmail }: HeaderProps) {
   const pathname = usePathname();
   const [projectOpen, setProjectOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const initials = (userName || userEmail)
     .split(/[\s@]/)
@@ -93,17 +95,20 @@ export default function Header({ userName, userEmail }: HeaderProps) {
     minute: "2-digit",
   });
 
-  // Close dropdown on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
-    if (!projectOpen) return;
+    if (!projectOpen && !menuOpen) return;
     function handleClick(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (projectOpen && dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setProjectOpen(false);
+      }
+      if (menuOpen && menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, [projectOpen]);
+  }, [projectOpen, menuOpen]);
 
   return (
     <header className="header">
@@ -171,12 +176,81 @@ export default function Header({ userName, userEmail }: HeaderProps) {
         <span className="header-meta">
           {weather && <WeatherIcon code={weather.code} />}
           {weather && <span className="header-meta-temp">{weather.temp}&#176;</span>}
-          <span className="header-meta-date">{dateStr} {timeStr}</span>
+          <span className="header-meta-date">{dateStr}</span>
         </span>
         <div className="header-user">
           <div className="header-user-avatar">{initials}</div>
           <span className="header-name">Konto</span>
         </div>
+      </div>
+
+      {/* Mobile hamburger */}
+      <div className="header-mobile-right" ref={menuRef}>
+        <span className="header-meta header-mobile-meta">
+          {weather && <WeatherIcon code={weather.code} />}
+          {weather && <span className="header-meta-temp">{weather.temp}&#176;</span>}
+          <span className="header-meta-date">{dateStr}</span>
+        </span>
+        <button
+          className="header-hamburger"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Menu"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            {menuOpen ? (
+              <>
+                <line x1="6" y1="6" x2="18" y2="18" />
+                <line x1="6" y1="18" x2="18" y2="6" />
+              </>
+            ) : (
+              <>
+                <line x1="4" y1="7" x2="20" y2="7" />
+                <line x1="4" y1="12" x2="20" y2="12" />
+                <line x1="4" y1="17" x2="20" y2="17" />
+              </>
+            )}
+          </svg>
+        </button>
+        {menuOpen && (
+          <div className="header-mobile-menu">
+            <nav className="header-mobile-nav">
+              {NAV_LINKS.map((link) => {
+                const isActive = link.href === "/dashboard"
+                  ? pathname === "/dashboard"
+                  : pathname.startsWith(link.href);
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`header-mobile-nav-link${isActive ? " active" : ""}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
+            <div className="header-mobile-divider" />
+            <div className="header-mobile-section">
+              <div className="header-dropdown-label">Projekt</div>
+              {PROJECTS.map((p) => (
+                <button
+                  key={p.id}
+                  className={`header-dropdown-item ${p.active ? "header-dropdown-item--active" : ""}`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <span className="header-dropdown-dot" />
+                  {p.name}
+                </button>
+              ))}
+            </div>
+            <div className="header-mobile-divider" />
+            <div className="header-mobile-user">
+              <div className="header-user-avatar">{initials}</div>
+              <span className="header-name">{userName || userEmail}</span>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );
