@@ -3436,8 +3436,11 @@ a { color: inherit; text-decoration: none; }
   .timeline-track { overflow-x: auto; padding-bottom: 8px; }
   .timeline-node { min-width: 100px; }
   .moodboard-grid { grid-template-columns: repeat(2, 1fr); }
-  .chat-float { left: 16px; right: 16px; max-width: none; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); }
-  .chat-messages { padding: 14px 14px 6px; }
+  .chat-float, .chat-float.chat-float-expanded { left: 12px; right: 12px; max-width: none; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+  .chat-messages { padding: 14px 14px 6px; box-shadow: none; }
+  .chat-float-bar { gap: 10px; padding: 12px; }
+  .chat-float-bar .chat-float-icon { width: 28px; height: 28px; }
+  .chat-float-send { width: 38px; height: 38px; }
   .header-nav { display: none; }
   .header-right { display: none; }
   .header-mobile-right { display: flex; }
