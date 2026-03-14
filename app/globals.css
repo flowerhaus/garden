@@ -45,6 +45,10 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   font-family: var(--font);
   background: var(--bg-outer);
@@ -56,6 +60,13 @@ body {
   letter-spacing: -0.01em;
   min-height: 100vh;
   padding: 16px;
+  overflow-x: hidden;
+}
+
+.app-wrapper {
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
 }
 
 a { color: inherit; text-decoration: none; }
@@ -3414,9 +3425,8 @@ a { color: inherit; text-decoration: none; }
 /* --- Responsive --- */
 
 @media (max-width: 768px) {
-  html { overflow-x: hidden; }
-  body { overflow-x: hidden; max-width: 100vw; padding: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
-  .container { padding: 8px 12px 0; border-radius: 20px; min-height: calc(100vh - 16px); max-width: 100%; overflow: hidden; }
+  body { padding: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
+  .container { padding: 8px 12px 0; border-radius: 20px; min-height: calc(100vh - 16px); }
   .dashboard-top { grid-template-columns: 1fr; padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px)); }
   .dashboard-grid { grid-template-columns: 1fr; }
   .folders-grid { grid-template-columns: 1fr; }
