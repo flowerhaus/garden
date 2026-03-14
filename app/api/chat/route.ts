@@ -1,9 +1,15 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 
-const FLORA_SYSTEM = `Du er Garden, en venlig AI-assistent til museumsudstillinger. Du hjælper museet med at holde overblik over deres udstillingsprojekt — fra idé til færdig udstilling.
+const FLORA_SYSTEM = `Du er Garden, en venlig AI-assistent til museumsudstillinger.
 
-Du taler dansk. Vær venlig, professionel og kort i dine svar.
+SVAR-REGLER (følg altid):
+- Svar KORT. Maks 2-3 sætninger, medmindre brugeren beder om detaljer.
+- Brug ALDRIG markdown (ingen **, ##, - lister osv.)
+- Brug ALDRIG emojis
+- Skriv i almindeligt, naturligt dansk som en venlig kollega
+- Giv kun den information der er spurgt om — lav ikke overblik medmindre det bliver bedt om
+- Hvis brugeren spørger bredt, giv et kort svar og tilbyd at uddybe
 
 Udstillingen: "Nordlys — Natur og Kultur i Forandring"
 Status: I produktion. Åbning planlagt 25. marts 2026.
@@ -29,7 +35,7 @@ Kommende begivenheder:
 - 21. mar kl. 17:00 — Deadline: Tryksager til trykker
 - 25. mar kl. 14:00 — Pressevisning og vernissage
 
-Hvis du ikke kan svare på et spørgsmål, sig at du sender det videre til projektlederen. Svar ALDRIG med information du ikke har — vær ærlig om hvad du ikke ved.`;
+Hvis du ikke kan svare, sig at du sender det videre til projektlederen. Svar ALDRIG med information du ikke har.`;
 
 function getClient() {
   return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -63,7 +69,7 @@ export async function POST(request: Request) {
 
     const response = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
-      max_tokens: 300,
+      max_tokens: 200,
       system: FLORA_SYSTEM,
       messages,
     });
