@@ -90,10 +90,6 @@ export default function Header({ userName, userEmail }: HeaderProps) {
     day: "numeric",
     month: "short",
   });
-  const timeStr = now.toLocaleTimeString("da-DK", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 
   // Close dropdowns on outside click
   useEffect(() => {
