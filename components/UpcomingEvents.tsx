@@ -1,12 +1,24 @@
 "use client";
 
+type EventType = "møde" | "workshop" | "deadline" | "gennemgang" | "briefing" | "vernissage";
+
 interface Event {
   id: string;
   title: string;
   description: string;
   date: string;
   time: string;
+  type: EventType;
 }
+
+const TYPE_LABELS: Record<EventType, string> = {
+  møde: "Møde",
+  workshop: "Workshop",
+  deadline: "Deadline",
+  gennemgang: "Gennemgang",
+  briefing: "Briefing",
+  vernissage: "Vernissage",
+};
 
 const DEMO_EVENTS: Event[] = [
   {
@@ -15,6 +27,7 @@ const DEMO_EVENTS: Event[] = [
     description: "Gennemgang af rumplan og placering af installationer i sal 2",
     date: "2026-03-14",
     time: "10:00",
+    type: "gennemgang",
   },
   {
     id: "2",
@@ -22,6 +35,7 @@ const DEMO_EVENTS: Event[] = [
     description: "Aftale om levering af værker og tekniske krav til ophængning",
     date: "2026-03-17",
     time: "13:30",
+    type: "møde",
   },
   {
     id: "3",
@@ -29,6 +43,7 @@ const DEMO_EVENTS: Event[] = [
     description: "Kurator fremlægger de endelige tekster til vægplancher og katalog",
     date: "2026-03-19",
     time: "09:00",
+    type: "møde",
   },
   {
     id: "4",
@@ -36,6 +51,7 @@ const DEMO_EVENTS: Event[] = [
     description: "Plakater, foldere og invitationer skal være klar til produktion",
     date: "2026-03-21",
     time: "17:00",
+    type: "deadline",
   },
   {
     id: "5",
@@ -43,6 +59,7 @@ const DEMO_EVENTS: Event[] = [
     description: "Pressen inviteres kl. 14, åbning for gæster kl. 17",
     date: "2026-03-25",
     time: "14:00",
+    type: "vernissage",
   },
 ];
 
@@ -85,6 +102,9 @@ export default function UpcomingEvents() {
               <div className="event-title-row">
                 <span className="event-time">{event.time}</span>
                 <span className="event-name">{event.title}</span>
+                <span className={`event-badge event-badge--${event.type}`}>
+                  {TYPE_LABELS[event.type]}
+                </span>
               </div>
               <span className="event-desc">{event.description}</span>
               <span className="event-weekday">{formatWeekday(event.date)}</span>
