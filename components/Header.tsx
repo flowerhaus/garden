@@ -43,6 +43,7 @@ const NAV_LINKS = [
   { href: "/dashboard/godkendelser", label: "Godkendelser" },
   { href: "/dashboard/filer", label: "Filer" },
   { href: "/dashboard/kalender", label: "Kalender" },
+  { href: "/dashboard/opslagstavle", label: "Opslagstavle" },
   { href: "/dashboard/team", label: "Team" },
 ];
 

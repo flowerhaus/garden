@@ -1,11 +1,44 @@
 "use client";
 
 import { useRef, useState } from "react";
+import type { ProjectFile } from "./FileBrowser";
 
-interface UploadedFile {
-  id: string;
-  name: string;
-  size: string;
+interface Props {
+  onUpload?: (files: ProjectFile[]) => void;
+}
+
+const EXT_CATEGORY: Record<string, string> = {
+  pdf: "Dokument", docx: "Dokument", doc: "Dokument", txt: "Dokument",
+  png: "Billede", jpg: "Billede", jpeg: "Billede", svg: "Billede",
+  gif: "Billede", tiff: "Billede", webp: "Billede",
+  mp4: "Video", mov: "Video", avi: "Video", webm: "Video",
+  mp3: "Lyd", wav: "Lyd", aac: "Lyd", flac: "Lyd",
+  pptx: "Præsentation", ppt: "Præsentation", key: "Præsentation",
+  xlsx: "Regneark", xls: "Regneark", csv: "Regneark",
+};
+
+const FOLDER_RULES: { keywords: string[]; folder: string }[] = [
+  { keywords: ["rumplan", "scenografi", "installation", "belysning", "plantegning"], folder: "Scenografi" },
+  { keywords: ["plakat", "folder", "invitation", "tryksag"], folder: "Tryksager" },
+  { keywords: ["presse", "kontakt", "gæsteliste", "kommunikation"], folder: "Kommunikation" },
+  { keywords: ["katalog", "tekst", "budget", "opgørelse"], folder: "Tekster" },
+  { keywords: ["bjørk", "bjork"], folder: "Kunstnere/Lena Bjørk" },
+];
+
+function categorizeFile(name: string): string {
+  const ext = name.split(".").pop()?.toLowerCase() || "";
+  return EXT_CATEGORY[ext] || "Dokument";
+}
+
+function detectFolder(name: string, category: string): string {
+  const lower = name.toLowerCase();
+  for (const rule of FOLDER_RULES) {
+    if (rule.keywords.some((kw) => lower.includes(kw))) {
+      return rule.folder;
+    }
+  }
+  if (category === "Video" || category === "Lyd") return "Media";
+  return "";
 }
 
 function formatSize(bytes: number): string {
@@ -14,29 +47,51 @@ function formatSize(bytes: number): string {
   return (bytes / (1024 * 1024)).toFixed(1) + " MB";
 }
 
-export default function FileUpload() {
-  const [files, setFiles] = useState<UploadedFile[]>([]);
+function formatDate(): string {
+  const d = new Date();
+  return d.toLocaleDateString("da-DK", { day: "numeric", month: "short", year: "numeric" });
+}
+
+interface PendingFile {
+  id: string;
+  name: string;
+  size: string;
+  folder: string;
+  category: string;
+}
+
+export default function FileUpload({ onUpload }: Props) {
+  const [pending, setPending] = useState<PendingFile[]>([]);
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   function addFiles(fileList: FileList) {
-    const newFiles = Array.from(fileList).map((f) => ({
-      id: crypto.randomUUID(),
-      name: f.name,
-      size: formatSize(f.size),
-    }));
-    setFiles((prev) => [...newFiles, ...prev]);
+    const newPending: PendingFile[] = [];
+    const newProjectFiles: ProjectFile[] = [];
+
+    for (const f of Array.from(fileList)) {
+      const category = categorizeFile(f.name);
+      const folder = detectFolder(f.name, category);
+      const id = crypto.randomUUID();
+      const size = formatSize(f.size);
+      const date = formatDate();
+
+      newPending.push({ id, name: f.name, size, folder, category });
+      newProjectFiles.push({ id, name: f.name, size, date, folder, category });
+    }
+
+    setPending((prev) => [...newPending, ...prev]);
+    onUpload?.(newProjectFiles);
   }
 
-  function removeFile(id: string) {
-    setFiles((prev) => prev.filter((f) => f.id !== id));
+  function removePending(id: string) {
+    setPending((prev) => prev.filter((f) => f.id !== id));
   }
 
   return (
     <div className="upload-section">
       <div className="upload-header">
-        <h2 className="upload-title">Filer</h2>
-        <button className="upload-all-btn">Alle filer</button>
+        <h2 className="upload-title">Upload</h2>
       </div>
       <div
         className={`upload-dropzone${dragging ? " upload-dropzone-active" : ""}`}
@@ -66,9 +121,9 @@ export default function FileUpload() {
         </svg>
         <span className="upload-dropzone-text">Træk filer hertil eller klik for at uploade</span>
       </div>
-      {files.length > 0 && (
+      {pending.length > 0 && (
         <div className="upload-files">
-          {files.map((file) => (
+          {pending.map((file) => (
             <div key={file.id} className="upload-file">
               <svg className="upload-file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -76,9 +131,12 @@ export default function FileUpload() {
               </svg>
               <div className="upload-file-info">
                 <span className="upload-file-name">{file.name}</span>
-                <span className="upload-file-size">{file.size}</span>
+                <span className="upload-file-size">
+                  {file.size}
+                  {file.folder && <span className="upload-file-folder"> → {file.folder}/</span>}
+                </span>
               </div>
-              <button className="upload-file-remove" onClick={() => removeFile(file.id)} title="Fjern">
+              <button className="upload-file-remove" onClick={() => removePending(file.id)} title="Fjern">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18" />
                   <line x1="6" y1="6" x2="18" y2="18" />

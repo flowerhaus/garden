@@ -41,6 +41,19 @@ function getClient() {
   return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 }
 
+function buildConversationHtml(history: { role: string; text: string }[], lastMessage: string): string {
+  let html = "";
+  for (const m of history) {
+    const label = m.role === "user" ? "Kunde" : "Garden";
+    const color = m.role === "user" ? "#2a2c24" : "#5a6b4a";
+    html += `<p style="margin: 8px 0 2px; font-size: 11px; font-weight: 600; color: ${color}; text-transform: uppercase; letter-spacing: 0.05em;">${label}</p>`;
+    html += `<p style="margin: 0 0 12px; font-size: 14px; color: #2a2c24;">${m.text}</p>`;
+  }
+  html += `<p style="margin: 8px 0 2px; font-size: 11px; font-weight: 600; color: #2a2c24; text-transform: uppercase; letter-spacing: 0.05em;">Kunde</p>`;
+  html += `<p style="margin: 0; font-size: 14px; color: #2a2c24;">${lastMessage}</p>`;
+  return html;
+}
+
 export async function POST(request: Request) {
   const { message, history } = await request.json();
 
@@ -90,15 +103,18 @@ export async function POST(request: Request) {
       try {
         const { Resend } = require("resend");
         const resend = new Resend(process.env.RESEND_API_KEY);
+        const conversationHtml = buildConversationHtml(history || [], message);
         await resend.emails.send({
           from: process.env.EMAIL_FROM || "Garden <noreply@resend.dev>",
           to: process.env.TEAM_EMAIL || "hello@flowerhaus.dk",
           subject: `Kundespørgsmål via Garden`,
           html: `
             <div style="font-family: sans-serif; max-width: 480px; padding: 32px 20px;">
-              <p style="color: #5a6b4a; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Spørgsmål fra kunde</p>
-              <p style="color: #2a2c24; margin: 12px 0; font-size: 15px;">"${message}"</p>
-              <p style="color: #858877; font-size: 13px;">Flora kunne ikke besvare dette spørgsmål. Venligst følg op.</p>
+              <p style="color: #5a6b4a; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">Samtale fra kunde</p>
+              <div style="margin: 16px 0; padding: 16px; background: #f5f5f0; border-radius: 8px;">
+                ${conversationHtml}
+              </div>
+              <p style="color: #858877; font-size: 13px;">Garden kunne ikke besvare dette spørgsmål. Venligst følg op.</p>
             </div>
           `,
         });

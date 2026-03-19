@@ -32,9 +32,35 @@ const INITIAL_NOTES: Note[] = [
     date: "12. mar",
     body: "Den opdaterede tidsplan for de sidste to uger inden vernissagen er sendt til alle. Vigtigste ændring: godkendelse af tekster er rykket til onsdag.",
   },
+  {
+    id: "4",
+    text: "Belysningsplan godkendt af scenograf",
+    author: "Marie",
+    date: "11. mar",
+    body: "Anders har godkendt belysningsplanen for sal 2. Vi kan nu bestille de ekstra spots fra leverandøren. Kontakt Jeppe for bestilling.",
+  },
+  {
+    id: "5",
+    text: "Catering til vernissage er bestilt",
+    author: "Anna",
+    date: "10. mar",
+    body: "Meyers leverer catering til vernissagen den 25. marts. Menu: finger food og bobler til 120 gæster. Faktura er sendt til økonomi.",
+  },
+  {
+    id: "6",
+    text: "Kunsttransport bekræftet",
+    author: "Peter",
+    date: "9. mar",
+    body: "Transportfirmaet har bekræftet afhentning af Lena Bjørks værker den 22. marts kl. 8. Kræver to mand til aflæsning. Koordiner med vagten.",
+  },
 ];
 
-export default function TeamNotes() {
+function formatDate(): string {
+  const d = new Date();
+  return d.toLocaleDateString("da-DK", { day: "numeric", month: "short" });
+}
+
+export default function OpslagstavlePage() {
   const [notes, setNotes] = useState<Note[]>(INITIAL_NOTES);
   const [openId, setOpenId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
@@ -57,13 +83,11 @@ export default function TeamNotes() {
 
   function handleAdd() {
     if (!newText.trim()) return;
-    const now = new Date();
-    const date = now.toLocaleDateString("da-DK", { day: "numeric", month: "short" });
     const note: Note = {
       id: crypto.randomUUID(),
       text: newText.trim(),
       author: "Dig",
-      date,
+      date: formatDate(),
       body: newBody.trim() || undefined,
     };
     setNotes((prev) => [note, ...prev]);
@@ -73,21 +97,27 @@ export default function TeamNotes() {
   }
 
   return (
-    <div className="notes-section">
-      <div className="notes-header">
-        <h2 className="notes-title">Opslagstavle</h2>
-        <button className="notes-add-btn" onClick={() => setAdding(true)} title="Nyt opslag">
+    <>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Opslagstavle</h1>
+          <p className="page-subtitle">Beskeder og opslag fra teamet</p>
+        </div>
+        <button className="opslagstavle-add-btn" onClick={() => setAdding(true)}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
+          Nyt opslag
         </button>
       </div>
-      <div className="notes-list">
-        {notes.slice(0, 3).map((n) => (
-          <div key={n.id} className="notes-item notes-item--clickable" onClick={() => setOpenId(n.id)}>
-            <span className="notes-text">{n.text}</span>
-            <span className="notes-meta">{n.author} &middot; {n.date}</span>
+
+      <div className="opslagstavle-grid">
+        {notes.map((n) => (
+          <div key={n.id} className="opslagstavle-card" onClick={() => setOpenId(n.id)}>
+            <span className="opslagstavle-card-text">{n.text}</span>
+            {n.body && <span className="opslagstavle-card-body">{n.body}</span>}
+            <span className="opslagstavle-card-meta">{n.author} &middot; {n.date}</span>
           </div>
         ))}
       </div>
@@ -151,6 +181,6 @@ export default function TeamNotes() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

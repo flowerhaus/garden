@@ -17,8 +17,8 @@ export default function DashboardPage() {
           <FileUpload />
         </div>
         <div className="dashboard-column">
-          <ProjectFolders />
           <TeamNotes />
+          <ProjectFolders />
         </div>
         <div className="dashboard-column">
           <Approvals />
