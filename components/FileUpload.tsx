@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import type { ProjectFile } from "./FileBrowser";
 
 interface Props {
+  dropboxPath?: string;
   onUpload?: (files: ProjectFile[]) => void;
 }
 
@@ -17,28 +18,9 @@ const EXT_CATEGORY: Record<string, string> = {
   xlsx: "Regneark", xls: "Regneark", csv: "Regneark",
 };
 
-const FOLDER_RULES: { keywords: string[]; folder: string }[] = [
-  { keywords: ["rumplan", "scenografi", "installation", "belysning", "plantegning"], folder: "Scenografi" },
-  { keywords: ["plakat", "folder", "invitation", "tryksag"], folder: "Tryksager" },
-  { keywords: ["presse", "kontakt", "gæsteliste", "kommunikation"], folder: "Kommunikation" },
-  { keywords: ["katalog", "tekst", "budget", "opgørelse"], folder: "Tekster" },
-  { keywords: ["bjørk", "bjork"], folder: "Kunstnere/Lena Bjørk" },
-];
-
 function categorizeFile(name: string): string {
   const ext = name.split(".").pop()?.toLowerCase() || "";
   return EXT_CATEGORY[ext] || "Dokument";
-}
-
-function detectFolder(name: string, category: string): string {
-  const lower = name.toLowerCase();
-  for (const rule of FOLDER_RULES) {
-    if (rule.keywords.some((kw) => lower.includes(kw))) {
-      return rule.folder;
-    }
-  }
-  if (category === "Video" || category === "Lyd") return "Media";
-  return "";
 }
 
 function formatSize(bytes: number): string {
@@ -47,45 +29,92 @@ function formatSize(bytes: number): string {
   return (bytes / (1024 * 1024)).toFixed(1) + " MB";
 }
 
-function formatDate(): string {
-  const d = new Date();
-  return d.toLocaleDateString("da-DK", { day: "numeric", month: "short", year: "numeric" });
-}
-
-interface PendingFile {
-  id: string;
+type UploadingFile = {
   name: string;
   size: string;
-  folder: string;
-  category: string;
-}
+  status: "pending" | "uploading" | "done" | "error";
+  error?: string;
+};
 
-export default function FileUpload({ onUpload }: Props) {
-  const [pending, setPending] = useState<PendingFile[]>([]);
+export default function FileUpload({ dropboxPath, onUpload }: Props) {
+  const [uploading, setUploading] = useState<UploadingFile[]>([]);
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  function addFiles(fileList: FileList) {
-    const newPending: PendingFile[] = [];
-    const newProjectFiles: ProjectFile[] = [];
+  async function addFiles(fileList: FileList) {
+    if (!dropboxPath) return;
 
-    for (const f of Array.from(fileList)) {
-      const category = categorizeFile(f.name);
-      const folder = detectFolder(f.name, category);
-      const id = crypto.randomUUID();
-      const size = formatSize(f.size);
-      const date = formatDate();
+    const files = Array.from(fileList);
+    const entries: UploadingFile[] = files.map((f) => ({
+      name: f.name,
+      size: formatSize(f.size),
+      status: "pending",
+    }));
+    setUploading(entries);
 
-      newPending.push({ id, name: f.name, size, folder, category });
-      newProjectFiles.push({ id, name: f.name, size, date, folder, category });
+    const uploaded: ProjectFile[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+      setUploading((prev) =>
+        prev.map((e, j) => (j === i ? { ...e, status: "uploading" } : e))
+      );
+
+      try {
+        const formData = new FormData();
+        formData.append("file", files[i]);
+        formData.append("path", dropboxPath);
+
+        const res = await fetch("/api/dropbox/files", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "Upload fejlede");
+        }
+
+        const entry = await res.json();
+
+        uploaded.push({
+          id: entry.id,
+          name: entry.name,
+          size: formatSize(entry.size),
+          date: new Date(entry.modified).toLocaleDateString("da-DK", {
+            day: "numeric", month: "short", year: "numeric",
+          }),
+          folder: "",
+          category: categorizeFile(entry.name),
+          dropboxPath: entry.path,
+        });
+
+        setUploading((prev) =>
+          prev.map((e, j) => (j === i ? { ...e, status: "done" } : e))
+        );
+      } catch (err: any) {
+        setUploading((prev) =>
+          prev.map((e, j) =>
+            j === i ? { ...e, status: "error", error: err.message } : e
+          )
+        );
+      }
     }
 
-    setPending((prev) => [...newPending, ...prev]);
-    onUpload?.(newProjectFiles);
+    if (uploaded.length > 0) onUpload?.(uploaded);
+    setTimeout(() => setUploading([]), 3000);
   }
 
-  function removePending(id: string) {
-    setPending((prev) => prev.filter((f) => f.id !== id));
+  if (!dropboxPath) {
+    return (
+      <div className="upload-section">
+        <div className="upload-header">
+          <h2 className="upload-title">Upload</h2>
+        </div>
+        <div className="upload-dropzone upload-dropzone-disabled">
+          <span className="upload-dropzone-text">Vælg en Dropbox-mappe for at uploade filer</span>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -121,10 +150,10 @@ export default function FileUpload({ onUpload }: Props) {
         </svg>
         <span className="upload-dropzone-text">Træk filer hertil eller klik for at uploade</span>
       </div>
-      {pending.length > 0 && (
+      {uploading.length > 0 && (
         <div className="upload-files">
-          {pending.map((file) => (
-            <div key={file.id} className="upload-file">
+          {uploading.map((file, i) => (
+            <div key={i} className={`upload-file upload-file--${file.status}`}>
               <svg className="upload-file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
@@ -133,15 +162,12 @@ export default function FileUpload({ onUpload }: Props) {
                 <span className="upload-file-name">{file.name}</span>
                 <span className="upload-file-size">
                   {file.size}
-                  {file.folder && <span className="upload-file-folder"> → {file.folder}/</span>}
+                  {file.status === "uploading" && <span className="upload-file-status"> — uploader...</span>}
+                  {file.status === "done" && <span className="upload-file-status upload-file-done"> — uploadet</span>}
+                  {file.status === "error" && <span className="upload-file-status upload-file-error"> — {file.error}</span>}
                 </span>
               </div>
-              <button className="upload-file-remove" onClick={() => removePending(file.id)} title="Fjern">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
+              {file.status === "uploading" && <span className="spinner" />}
             </div>
           ))}
         </div>

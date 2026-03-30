@@ -4139,4 +4139,136 @@ a { color: inherit; text-decoration: none; }
   .filebrowser-table th:nth-child(4),
   .filebrowser-table td:nth-child(4) { display: none; }
   .event-title-row { flex-wrap: wrap; }
+  .dropbox-toolbar { flex-direction: column; align-items: stretch; }
+  .dropbox-linked { flex-wrap: wrap; }
+  .picker-modal { max-height: 90vh; }
+}
+
+/* ── Dropbox Toolbar ── */
+.dropbox-toolbar {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+  padding: 16px 20px; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow-card);
+}
+.dropbox-linked {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+}
+.dropbox-linked-icon { width: 20px; height: 20px; color: var(--olive); flex-shrink: 0; }
+.dropbox-linked-path {
+  font-size: 14px; font-weight: 500; color: var(--text-secondary);
+  flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.btn-sm { padding: 6px 14px; font-size: 13px; min-height: auto; }
+
+/* ── Clickable file rows ── */
+.filebrowser-row-clickable { cursor: pointer; transition: background 150ms ease; }
+.filebrowser-row-clickable:hover { background: var(--bg-inset); }
+.recent-upload-clickable { cursor: pointer; transition: background 150ms ease; }
+.recent-upload-clickable:hover { background: var(--bg-inset); }
+
+/* ── Upload disabled state ── */
+.upload-dropzone-disabled { cursor: default; opacity: 0.6; }
+.upload-dropzone-disabled:hover { border-color: var(--border); background: var(--bg-card); }
+
+/* ── Upload status ── */
+.upload-file--uploading .upload-file-icon { color: var(--olive); }
+.upload-file-status { font-weight: 500; }
+.upload-file-done { color: var(--olive); }
+.upload-file-error { color: var(--coral); }
+
+/* ── Loading & Empty states ── */
+.loading-state {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 60px 20px; color: var(--text-muted); font-size: 15px;
+}
+.empty-state-card {
+  text-align: center; padding: 60px 20px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow-card);
+}
+.empty-state-card .empty-state-icon { width: 48px; height: 48px; color: var(--text-muted); margin: 0 auto 16px; opacity: 0.5; }
+.empty-state-card h3 { font-size: 17px; color: var(--text-secondary); margin-bottom: 6px; }
+.empty-state-card p { font-size: 14px; color: var(--text-muted); }
+
+/* ── Dropbox Folder Picker ── */
+.picker-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; padding: 20px;
+  animation: pickerFade 200ms ease;
+}
+@keyframes pickerFade { from { opacity: 0; } to { opacity: 1; } }
+
+.picker-modal {
+  background: var(--bg-card); border-radius: var(--radius);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.15); width: 100%; max-width: 520px;
+  max-height: 80vh; display: flex; flex-direction: column;
+  animation: pickerSlide 250ms ease;
+}
+@keyframes pickerSlide { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+.picker-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px; border-bottom: 1px solid var(--border);
+}
+.picker-header h3 { font-size: 17px; font-weight: 700; }
+.picker-close {
+  background: none; border: none; font-size: 22px; color: var(--text-muted);
+  cursor: pointer; padding: 4px 8px; border-radius: var(--radius-xs);
+  transition: all 150ms ease;
+}
+.picker-close:hover { color: var(--text); background: var(--bg-inset); }
+
+.picker-breadcrumbs {
+  display: flex; align-items: center; gap: 4px; padding: 10px 22px;
+  border-bottom: 1px solid var(--border); flex-wrap: wrap;
+}
+.picker-crumb {
+  background: none; border: none; font-family: var(--font); font-size: 13px;
+  font-weight: 600; color: var(--olive); cursor: pointer; padding: 4px 8px;
+  border-radius: var(--radius-xs); transition: background 150ms ease;
+}
+.picker-crumb:hover { background: var(--olive-light); }
+.picker-crumb--current { color: var(--text); cursor: default; }
+.picker-crumb--current:hover { background: none; }
+.picker-sep { color: var(--text-muted); font-size: 13px; }
+
+.picker-list { flex: 1; overflow-y: auto; padding: 8px; min-height: 180px; }
+.picker-status {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 40px 20px; color: var(--text-muted); font-size: 14px;
+}
+.picker-error { color: var(--coral); }
+
+.picker-item {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+  padding: 10px 14px; background: none; border: none; border-radius: var(--radius-sm);
+  font-family: var(--font); font-size: 14px; font-weight: 500; color: var(--text);
+  cursor: pointer; transition: background 150ms ease; text-align: left;
+}
+.picker-item:hover { background: var(--bg-inset); }
+.picker-folder-icon { width: 20px; height: 20px; color: var(--olive); flex-shrink: 0; }
+
+.picker-create {
+  display: flex; gap: 8px; padding: 12px 22px; border-top: 1px solid var(--border);
+}
+.picker-create input {
+  flex: 1; padding: 8px 12px; min-height: 38px;
+  background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius-xs);
+  font-family: var(--font); font-size: 14px; color: var(--text); outline: none;
+  transition: border-color 150ms ease;
+}
+.picker-create input:focus { border-color: var(--olive); }
+.picker-create button {
+  min-height: 38px; padding: 8px 16px;
+  background: var(--bg-inset); border: 1px solid var(--border); border-radius: var(--radius-xs);
+  font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--text-secondary);
+  cursor: pointer; transition: all 150ms ease;
+}
+.picker-create button:hover { border-color: var(--olive); color: var(--olive); }
+.picker-create button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.picker-actions {
+  display: flex; gap: 10px; justify-content: flex-end;
+  padding: 14px 22px; border-top: 1px solid var(--border);
 }

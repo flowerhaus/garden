@@ -9,10 +9,12 @@ export interface ProjectFile {
   date: string;
   folder: string;
   category: string;
+  dropboxPath?: string;
 }
 
 interface Props {
   files: ProjectFile[];
+  onFileClick?: (file: ProjectFile) => void;
 }
 
 const CATEGORIES = ["Alle", "Dokument", "Billede", "Video", "Lyd", "Præsentation", "Regneark"];
@@ -37,7 +39,7 @@ function getFilesInFolder(files: ProjectFile[], path: string) {
   return files.filter((f) => f.folder === path);
 }
 
-export default function FileBrowser({ files }: Props) {
+export default function FileBrowser({ files, onFileClick }: Props) {
   const [currentPath, setCurrentPath] = useState("");
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("Alle");
@@ -144,7 +146,11 @@ export default function FileBrowser({ files }: Props) {
             </thead>
             <tbody>
               {filteredFiles.map((file) => (
-                <tr key={file.id}>
+                <tr
+                  key={file.id}
+                  className={onFileClick ? "filebrowser-row-clickable" : ""}
+                  onClick={() => onFileClick?.(file)}
+                >
                   <td>
                     <span className="filebrowser-filename">
                       <svg className="filebrowser-file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

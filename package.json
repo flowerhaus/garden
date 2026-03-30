@@ -12,6 +12,7 @@
     "@anthropic-ai/sdk": "^0.78.0",
     "@libsql/client": "^0.17.0",
     "@notionhq/client": "^5.12.0",
+    "dropbox": "^10.34.0",
     "next": "14.2.35",
     "react": "^18",
     "react-dom": "^18",
